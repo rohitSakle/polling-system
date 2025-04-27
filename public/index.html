@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test page</title>
+  </head>
+  <body>
+    <h1>Hello...</h1>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io("http://localhost:4001");
+
+      socket.on("connect", () => {
+        console.log("Connected as:", socket.id);
+
+        socket.emit("joinPollRoom", "rohit02");
+      });
+
+      socket.on("votUpdate", async ({ pollId }) => {
+        console.log("vote update event called", pollId);
+        // Make API call using fetch
+        fetch(`http://localhost:4001/api/v1/${pollId}/vote`, {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("API response:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
+    </script>
+  </body>
+</html>
